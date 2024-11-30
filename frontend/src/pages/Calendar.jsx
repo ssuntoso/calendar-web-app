@@ -122,7 +122,7 @@ function Calendar() {
 return (
     <div className="container mx-auto">
         <div className="p-5">
-            <div className="flex justify-between items-center mt-10 mb-10">
+            <div className="flex justify-between items-center mt-5 mb-5">
                 <h1 className="text-3xl font-bold">Calendar</h1>
                 <button className='py-2 px-5 text-white bg-[#12acec]'>
                     <Link to="/import-csv" className="border-white">Import From CSV</Link>
@@ -130,7 +130,7 @@ return (
             </div>
             <ScheduleComponent 
                 width='100%'
-                height='85vh'
+                height='80vh'
                 // editorTemplate={}
                 eventSettings={{
                     dataSource: data

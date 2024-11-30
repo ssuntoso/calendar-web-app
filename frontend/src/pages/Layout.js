@@ -1,5 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import { Cookies } from 'react-cookie';
+import logo from '../images/Animoca_Brands_Logo.png';
 
 const cookies = new Cookies();
 
@@ -11,15 +12,19 @@ const Layout = () => {
 
   return (
     <>
-      <nav className="bg-[#12acec] text-white font-bold text-right p-5">
-        {
-        cookies.get('auth') ?
-          <button className="border-white text-right" onClick={handleLogout}>Logout</button>
-          :
-          <Link className="border-white text-right" to="/login">Login</Link>
-        }
+      <nav className="bg-white text-[#12acec] drop-shadow-md font-bold text-right py-2 px-5 flex justify-between items-center">
+        <div>
+          <img src={logo} alt="Logo" className="h-12 inline-block" />
+        </div>
+        <div>
+          {
+          cookies.get('auth') ?
+            <button className="border-white" onClick={handleLogout}>Logout</button>
+            :
+            <Link className="border-white" to="/login">Login</Link>
+          }
+        </div>
       </nav>
-
       <Outlet />
     </>
   )
