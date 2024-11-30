@@ -1,7 +1,9 @@
 require('dotenv').config()
 const express = require('express')
+const jwt = require('jsonwebtoken')
 const { Pool } = require('pg')
 const app = express()
+const cors = require('cors')
 const port = 3000
 
 const pool = new Pool({
@@ -13,6 +15,25 @@ const pool = new Pool({
 })
 
 app.use(express.json())
+app.use(cors())
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) {
+        return res.sendStatus(401)
+    }
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.sendStatus(403)
+        }
+        if (user.exp < Math.floor(Date.now() / 1000)) {
+            return res.sendStatus(403)
+        }
+        req.user = user
+        next()
+    })
+}
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -40,14 +61,42 @@ app.post('/signup', async(req, res) => {
             [email]
         )
         if (checkUser.rows.length > 0) {
-            return res.status(409).json({message: 'User already exists'})
+            return res.status(409).json({message: 'User already exists, please login'})
         }
         const result = await pool.query(
             'INSERT INTO "user" (email, password) VALUES ($1, $2) RETURNING user_id, email',
             [email, password]
         )
-        console.log(result)
+        console.log(`user with user_id ${result.rows[0].user_id} and email ${result.rows[0].email} added to database`)
         res.status(201).json(result.rows[0])
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({message: 'Error adding user to database'})
+    }
+})
+
+app.post('/googleSignup', async(req, res) => {
+    const token = req.body.token
+    const google_data = jwt.decode(token)
+    const email = google_data.email
+    try {
+        const checkUser = await pool.query(
+            'SELECT email FROM "user" WHERE email = $1',
+            [email]
+        )
+        if (checkUser.rows.length > 0) {
+            return res.status(409).json({message: 'User already exists, please login'})
+        }
+        const result = await pool.query(
+            'INSERT INTO "user" (email, google_token) VALUES ($1, $2) RETURNING user_id, email',
+            [email, token]
+        )
+        console.log(`user with user_id ${result.rows[0].user_id} and email ${result.rows[0].email} added to database`)
+        const token_jwt = jwt.sign({user_id: result.rows[0].user_id}, process.env.JWT_SECRET, {expiresIn: '30d'})
+        res.status(201).json({
+            token: token_jwt,
+            user_id: result.rows[0].user_id
+        })
     } catch (err) {
         console.error(err)
         res.status(500).json({message: 'Error adding user to database'})
@@ -69,24 +118,50 @@ app.post('/login', async(req, res) => {
         if (result.rows.length === 0) {
             return res.status(401).json({message: 'Invalid email or password'})
         } 
-        res.json(result.rows[0])
+        const token = jwt.sign({user_id: result.rows[0].user_id}, process.env.JWT_SECRET, {expiresIn: '30d'})
+        res.json({
+            token: token,
+            user_id: result.rows[0].user_id
+        })
     } catch (err) {
         console.error(err)
         res.status(500).json({message: 'Error checking user in database'})
     }
 })
 
-app.get('/addSubject', async(req, res) => {
-    //  add subject to database
-    const { subject, start_date, start_time, end_date, end_time, all_day_event, description, location } = req.body
-    if (!subject_name) {
-        return res.status(400).json({message: 'subject_name is required'})
-    }
+app.post('/googleLogin', async(req, res) => {
+    //  check if user exists in database
+    const token = req.body.token
+    const google_data = jwt.decode(token)
+    const email = google_data.email
 
     try {
         const result = await pool.query(
-            'INSERT INTO calendar (subject, start_date, start_time, end_date, end_time, all_day_event, description, location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING subject_id, subject_name',
-            [subject, start_date, start_time, end_date, end_time, all_day_event, description, location]
+            'SELECT user_id, email FROM "user" WHERE email = $1',
+            [email]
+        )
+        if (result.rows.length === 0) {
+            return res.status(401).json({message: 'Email not found, please sign up'})
+        } 
+        const token_jwt = jwt.sign({user_id: result.rows[0].user_id}, process.env.JWT_SECRET, {expiresIn: '30d'})
+        res.json({
+            token: token_jwt,
+            user_id: result.rows[0].user_id
+        })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({message: 'Error checking user in database'})
+    }
+})
+
+app.post('/addSubject', authenticateToken, async(req, res) => {
+    //  add subject to database
+    const { user_id, subject_id, subject, start_time_zone, start_time, end_time_zone, end_time, all_day_event, description, location } = req.body
+
+    try {
+        const result = await pool.query(
+            'INSERT INTO calendar (user_id, subject_id, subject, start_time_zone, start_time, end_time_zone, end_time, all_day_event, description, location) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING subject_id, subject',
+            [user_id, subject_id, subject, start_time_zone, start_time, end_time_zone, end_time, all_day_event, description, location]
         )
         res.status(201).json(result.rows[0])
     } catch (err) {
@@ -95,11 +170,11 @@ app.get('/addSubject', async(req, res) => {
     }
 })
 
-app.get('/getSubjects', async(req, res) => {
+app.get('/getSubjects', authenticateToken, async(req, res) => {
     //  get all subjects from database
     try {
         const result = await pool.query(
-            'SELECT subject_id, subject, start_date, start_time, end_date, end_time, all_day_event, description, location FROM subject WHERE user_id = $1',
+            'SELECT user_id, subject_id, subject, start_time_zone, CAST(start_time AS varchar), end_time_zone, CAST(end_time AS varchar), all_day_event, description, location FROM calendar WHERE user_id = $1',
             [req.query.user_id]
         )
         res.json(result.rows)
@@ -109,17 +184,15 @@ app.get('/getSubjects', async(req, res) => {
     }
 })
 
-app.put('/updateSubject', async(req, res) => {
+app.put('/updateSubject', authenticateToken, async(req, res) => {
+    authenticateToken(req, res)
     //  update subject in database
-    const { subject_id, subject, start_date, start_time, end_date, end_time, all_day_event, description, location } = req.body
-    if (!subject_id) {
-        return res.status(400).json({message: 'subject_id is required'})
-    }
+    const { user_id, subject_id, subject, start_time_zone, start_time, end_time_zone, end_time, all_day_event, description, location } = req.body
 
     try {
         const result = await pool.query(
-            'UPDATE calendar SET subject = $1, start_date = $2, start_time = $3, end_date = $4, end_time = $5, all_day_event = $6, description = $7, location = $8 WHERE subject_id = $9 RETURNING subject_id, subject_name',
-            [subject, start_date, start_time, end_date, end_time, all_day_event, description, location, subject_id]
+            'UPDATE calendar SET user_id = $1, subject_id = $2, subject = $3, start_time_zone = $4, start_time = $5, end_time_zone = $6, end_time = $7, all_day_event = $8, description = $10, location = $11 WHERE subject_id = $2 RETURNING subject_id, subject',
+            [user_id, subject_id, subject, start_time_zone, start_time, end_time_zone, end_time, all_day_event, description, location]
         )
         res.json(result.rows[0])
     } catch (err) {
@@ -128,18 +201,18 @@ app.put('/updateSubject', async(req, res) => {
     }
 })
 
-app.delete('/deleteSubject', async(req, res) => {
+app.delete('/deleteSubject', authenticateToken, async(req, res) => {
+    authenticateToken(req, res)
     //  delete subject from database
-    const { subject_id } = req.body
-    if (!subject_id) {
-        return res.status(400).json({message: 'subject_id is required'})
-    }
-
+    const { subject_id, user_id } = req.body
     try {
         const result = await pool.query(
-            'DELETE FROM calendar WHERE subject_id = $1 RETURNING subject_id, subject_name',
-            [subject_id]
+            'DELETE FROM calendar WHERE subject_id = $1 AND user_id = $2 RETURNING subject_id, subject',
+            [subject_id, user_id]
         )
+        if (result.rows.length === 0) {
+            return res.status(404).json({message: 'Subject or User not found'})
+        }
         res.json(result.rows[0])
     } catch (err) {
         console.error(err)
