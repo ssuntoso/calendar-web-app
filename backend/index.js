@@ -26,5 +26,5 @@ app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/event', eventRoutes)
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`listening on port ${port}`)
 })

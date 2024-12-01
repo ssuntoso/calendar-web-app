@@ -65,6 +65,41 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
+### Kubernetes Deployment
+#### Create Docker Image
+This guide will guide you through the process of creating a docker image.
+
+##### Pre-requisite
+- Doker desktop is installed
+
+##### Image Creation
+1. use terminal to navigate to /backend folder
+2. run `docker build -t callendar-app:v1.0.0
+
+#### Run Calendar API in K8s
+This guide will guide you through the process of deploying the Calendar API inside a k8s cluster.
+
+##### Pre-requisite
+- K8s client install 
+- K8s cluster is running
+- Calendar App docker image created
+
+##### Installation
+1. Create a new namespace `kubectl create namespace calendar-app`
+2. Create a secret using this command 
+```
+kubectl -n calendar-app create secret generic syncfusion-license --from-literal=syncfusion-license=<SYNCFUSION_LICENSE>
+kubectl -n calendar-app create secret generic google-client-secret --from-literal=google-client-secret=<GOOGLE_CLIENT_SECRET>
+kubectl -n calendar-app create secret generic hash-salt --from-literal=hash-salt=<HASH_SALT>
+```
+3. Apply the `deployment.yaml` and `service.yaml` file 
+```
+kubectl -n calendar-app apply -f k8s/deployment.yaml
+kubectl -n calendar-app apply -f k8s/service.yaml
+```
+4. To get external ip adderess of the service, use `kubectl -n calendar-app get svc`
+5. Use the EXTERNAL-IP:80/ to make a test.
+
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

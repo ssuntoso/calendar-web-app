@@ -4,6 +4,7 @@ import { ScheduleComponent, ViewsDirective, ViewDirective, Inject, Day, Month, W
 import { registerLicense } from '@syncfusion/ej2-base';
 import { Cookies } from 'react-cookie';
 import Button from '../components/button';
+import { DateTime } from 'luxon';
 
 registerLicense(
   process.env.REACT_APP_SYNCFUSION_LICENSE
@@ -15,6 +16,11 @@ const cookies = new Cookies();
 const formatDate = (date) => {
   // format date object to 'YYYY-MM-DD HH:MM:SS'
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+}
+
+const formatDateTime = (date) => {
+  // format date object to 'YYYY-MM-DDTHH:MM:SS'
+  return `${date.year}-${date.month.toString().padStart(2, '0')}-${date.day.toString().padStart(2, '0')} ${date.hour.toString().padStart(2, '0')}:${date.minute.toString().padStart(2, '0')}:${date.second.toString().padStart(2, '0')}`
 }
 
 const onActionBegin = (event) => {
@@ -104,12 +110,14 @@ function Calendar() {
             alert(events.message);
           }
           setData(events.map(event => {
+            const startTime = DateTime.fromFormat(event.start_time, 'yyyy-MM-dd HH:mm:ss', { zone: event.start_time_zone }).setZone('Asia/Hong_Kong');
+            const endTime = DateTime.fromFormat(event.end_time, 'yyyy-MM-dd HH:mm:ss', { zone: event.end_time_zone }).setZone('Asia/Hong_Kong');
             return {
               Id: event.subject_id,
               Subject: event.subject,
-              StartTime: new Date(event.start_time),
+              StartTime: formatDateTime(startTime),
               StartTimezone: event.start_time_zone,
-              EndTime: new Date(event.end_time),
+              EndTime: formatDateTime(endTime),
               EndTimezone: event.end_time_zone,
               IsAllDay: event.all_day_event,
               RecurrenceRule: event.reccurence_rule,

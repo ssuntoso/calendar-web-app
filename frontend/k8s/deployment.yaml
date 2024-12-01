@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calendar-app
+  template:
+    metadata:
+      labels:
+        app: calendar-app
+    spec:
+      containers:
+        - name: calendar-app
+          image: asia-east2-docker.pkg.dev/calendar-web-app-443211/calendar-app/calendar-app:v1.0.12
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"

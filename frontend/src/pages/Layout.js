@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import { Cookies } from 'react-cookie';
-import logo from '../images/Animoca_Brands_Logo.png';
+import logo from '../images/calendar.png';
 
 const cookies = new Cookies();
 

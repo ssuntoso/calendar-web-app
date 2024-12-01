@@ -3,7 +3,7 @@ import Papa from 'papaparse';
 import { Cookies } from 'react-cookie';
 
 const cookies = new Cookies();
-const backendEndpoint = process.env.REACT_APP_API_URL;
+const backendEndpoint = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_VERSION}${process.env.REACT_APP_API_EVENT}`;
 
 const formatDate = (date) => {
     // format date object to 'YYYY-MM-DD HH:MM:SS'

@@ -16,7 +16,7 @@ router.post('/googleSignup', googleSignup);
 router.post('/login', login);
 router.post('/googleLogin', googleLogin);
 router.get('/verifyEmail', verifyEmail);
-router.post('/forgotPassword', forgotPassword);
+router.get('/forgotPassword', forgotPassword);
 router.post('/resetPassword', resetPassword);
 
 module.exports = router;
