@@ -1,0 +1,11 @@
+subject,start_time_zone,start_time,end_time_zone,end_time,all_day_event,description,location
+Meeting with Team,Asia/Hong_Kong,11/25/24 10:30,Asia/Hong_Kong,11/25/24 11:30,FALSE,Discuss project updates,Office
+Lunch with Client,Asia/Hong_Kong,11/26/24 12:00,Asia/Hong_Kong,11/26/24 13:00,FALSE,Discuss partnership opportunities,Restaurant
+Project Deadline Reminder,Asia/Hong_Kong,11/27/24 9:00,Asia/Hong_Kong,11/27/24 9:30,FALSE,Final submission for the project,Office
+Team Building Activity,Asia/Hong_Kong,11/28/24 14:00,Asia/Hong_Kong,11/28/24 17:00,FALSE,Outdoor team event,Park
+Conference Call,Asia/Hong_Kong,11/29/24 15:00,Asia/Hong_Kong,11/29/24 16:00,FALSE,Weekly sync with remote teams,Home Office
+Workshop on New Tools,Asia/Hong_Kong,11/30/24 10:00,Asia/Hong_Kong,11/30/24 12:00,FALSE,Training on new software,Conference Room
+Sales Presentation,Asia/Hong_Kong,12/1/24 11:00,Asia/Hong_Kong,12/1/24 12:00,FALSE,Presenting to potential clients,Office
+1-on-1 with Manager,Asia/Hong_Kong,12/2/24 9:30,Asia/Hong_Kong,12/2/24 10:00,FALSE,Performance review,Manager's Office
+Brainstorming Session,Asia/Hong_Kong,12/3/24 13:00,Asia/Hong_Kong,12/3/24 14:30,FALSE,Idea generation for new project,Meeting Room
+End of Year Party,Asia/Hong_Kong,12/15/24 18:00,Asia/Hong_Kong,12/15/24 21:00,FALSE,Celebrating the year's success,Event Hall

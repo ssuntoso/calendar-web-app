@@ -3,7 +3,7 @@ import '../index.css';
 import { ScheduleComponent, ViewsDirective, ViewDirective, Inject, Day, Month, Week } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { Cookies } from 'react-cookie';
-import { Link } from 'react-router-dom';
+import Button from '../components/button';
 
 registerLicense(
   process.env.REACT_APP_SYNCFUSION_LICENSE
@@ -19,7 +19,7 @@ const formatDate = (date) => {
 
 const onActionBegin = (event) => {
   if (event.requestType === 'eventCreate') {
-    let event_data =  {
+    const event_data =  [{
       user_id: cookies.get('auth').user_id,
       subject_id: event.data[0].Id,
       subject: event.data[0].Subject,
@@ -30,7 +30,7 @@ const onActionBegin = (event) => {
       all_day_event: event.data[0].IsAllDay,
       description: event.data[0].Description,
       location: event.data[0].Location
-    }
+    }]
     // post request to addSubject
     fetch(`${backendEndpoint}/addSubject`, {
       method: 'POST',
@@ -41,7 +41,6 @@ const onActionBegin = (event) => {
       body: JSON.stringify(event_data)
     })
     .then(response => response.json())
-    .then(data => console.log(data))
     .catch((error) => console.error('Error:', error));
 
   } else if (event.requestType === 'eventChange') {
@@ -101,32 +100,33 @@ function Calendar() {
         })
         .then(response => response.json())
         .then(events => {
-            setData(events.map(event => {
+          if (events.message) {
+            alert(events.message);
+          }
+          setData(events.map(event => {
             return {
-                Id: event.subject_id,
-                Subject: event.subject,
-                StartTime: new Date(event.start_time),
-                StartTimezone: event.start_time_zone,
-                EndTime: new Date(event.end_time),
-                EndTimezone: event.end_time_zone,
-                IsAllDay: event.all_day_event,
-                RecurrenceRule: event.reccurence_rule,
-                Description: event.description,
-                Location: event.location
+              Id: event.subject_id,
+              Subject: event.subject,
+              StartTime: new Date(event.start_time),
+              StartTimezone: event.start_time_zone,
+              EndTime: new Date(event.end_time),
+              EndTimezone: event.end_time_zone,
+              IsAllDay: event.all_day_event,
+              RecurrenceRule: event.reccurence_rule,
+              Description: event.description,
+              Location: event.location
             }
-            }))
+          }))
         })
         .catch((error) => console.error('Error:', error));
     }
   }, []);
 return (
-    <div className="container mx-auto">
+    <div className="container mx-auto max-w-5xl">
         <div className="p-5">
             <div className="flex justify-between items-center mt-5 mb-5">
                 <h1 className="text-3xl font-bold">Calendar</h1>
-                <button className='py-2 px-5 text-white bg-[#12acec]'>
-                    <Link to="/import-csv" className="border-white">Import From CSV</Link>
-                </button>
+                <Button text="Import From CSV" onClick={() => window.location.href = '/import-csv'}/>
             </div>
             <ScheduleComponent 
                 width='100%'

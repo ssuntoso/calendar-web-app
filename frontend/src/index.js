@@ -8,6 +8,10 @@ import Layout from './pages/Layout'
 import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
 import ImportCSV from './pages/ImportCSV';
+import Verification from './pages/Verification';
+import CheckEmail from './pages/CheckEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPasswordPage from './pages/Reset';
 
 export default function App() {
   return (
@@ -18,8 +22,10 @@ export default function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
           <Route path="import-csv" element={<ImportCSV />} />
-          {/*<Route path="contact" element={<Contact />} />
-          <Route path="*" element={<NoPage />} /> */}
+          <Route path="verify" element={<Verification />} />
+          <Route path="check-email" element={<CheckEmail />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset" element={<ResetPasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

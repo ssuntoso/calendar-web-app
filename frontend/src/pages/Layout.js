@@ -12,17 +12,19 @@ const Layout = () => {
 
   return (
     <>
-      <nav className="bg-white text-[#12acec] drop-shadow-md font-bold text-right py-2 px-5 flex justify-between items-center">
-        <div>
-          <img src={logo} alt="Logo" className="h-12 inline-block" />
-        </div>
-        <div>
-          {
-          cookies.get('auth') ?
-            <button className="border-white" onClick={handleLogout}>Logout</button>
-            :
-            <Link className="border-white" to="/login">Login</Link>
-          }
+      <nav className="bg-white text-[#12acec] drop-shadow-md font-bold text-right py-2 px-5">
+        <div className="max-w-5xl flex justify-between items-center mx-auto">
+          <Link to="/">
+            <img src={logo} alt="Logo" className="h-12 inline-block" />
+          </Link>
+          <div>
+            {
+            cookies.get('auth') ?
+              <button className="border-white" onClick={handleLogout}>Logout</button>
+              :
+              <Link className="border-white" to="/login">Login</Link>
+            }
+          </div>
         </div>
       </nav>
       <Outlet />
