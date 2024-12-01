@@ -5,7 +5,7 @@ import Form from '../components/form';
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
-    const backendEndpoint = process.env.REACT_APP_API_URL;
+    const backendEndpoint = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_VERSION}${process.env.REACT_APP_API_USER}`;
 
     const handleSubmit = (e) => {
         e.preventDefault();

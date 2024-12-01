@@ -9,7 +9,7 @@ registerLicense(
   process.env.REACT_APP_SYNCFUSION_LICENSE
 )
 
-const backendEndpoint = process.env.REACT_APP_API_URL
+const backendEndpoint = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_VERSION}${process.env.REACT_APP_API_EVENT}`;
 const cookies = new Cookies();
 
 const formatDate = (date) => {

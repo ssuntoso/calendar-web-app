@@ -7,7 +7,7 @@ import Form from '../components/form';
 const ResetPasswordPage = () => {
     const [password, setPassword] = useState('');
     const email = new URLSearchParams(window.location.search).get('email');
-    const backendEndpoint = process.env.REACT_APP_API_URL;
+    const backendEndpoint = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_VERSION}${process.env.REACT_APP_API_USER}`;
 
     const handleSubmit = (e) => {
         e.preventDefault();

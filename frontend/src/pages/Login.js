@@ -10,7 +10,7 @@ import Form from '../components/form';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const backendEndpoint = process.env.REACT_APP_API_URL;
+    const backendEndpoint = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_VERSION}${process.env.REACT_APP_API_USER}`;
     const hashSecert = process.env.REACT_APP_HASH_SALT;
 
     const handleSubmit = (e) => {
