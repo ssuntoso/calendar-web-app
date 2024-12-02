@@ -1,5 +1,5 @@
 # Calender Web App
-This app is design to allow user to have a schedule planner. It will send reminder 15 minutes before the event.
+This app is design to allow user to have a schedule planner. It will send reminder **15 minutes before the event**.
 
 ## Demo & Documentation
 This applocation is deployed to Google Cloud using Cloud Run service at [https://calendar-app-114734088432.asia-east2.run.app](https://calendar-app-114734088432.asia-east2.run.app).
