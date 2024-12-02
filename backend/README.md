@@ -1,4 +1,5 @@
 # Backend Documentation
+This API is build as part of Calender App project. Refer to this [swagger](calendar-api-swagger.yaml).
 ## Create Docker Image
 This guide will guide you through the process of creating a docker image.
 
