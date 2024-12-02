@@ -1,0 +1,578 @@
+openapi: 3.0.3
+info:
+  title: Calendar API
+  description: |-
+    This is an API for a calendar application. It allows you to manage your events and calendars with user authentication and database connection.
+
+    Refer to this Github page for more information: [https://github.com/ssuntoso/calendar-web-app](https://github.com/ssuntoso/calendar-web-app)
+
+    This API is built using Node.js and Express. It is also documented using Swagger UI.
+  contact:
+    email: animocainterview@gmail.com
+  version: v1.0.8
+servers:
+  - url: https://calendar-api-114734088432.asia-east2.run.app/api/v1
+tags:
+  - name: user
+    description: Operations about user
+  - name: event
+    description: Operations about events
+paths:
+  /user/signup:
+    post:
+      tags:
+        - user
+      summary: Sign up a new user
+      description: Register a new user to database and send a verification email.
+      operationId: createUsersWithObjectInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credential'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid email or password supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exist, please login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error adding user to database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/googleSignup:
+    post:
+      tags:
+        - user
+      summary: Sign up a new user using Google
+      description: Register a new user to database using Google OAuth and send a verification email.
+      operationId: createUsersWithGoogleSignUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleCredential'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        '400':
+          description: Invalid email or password supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exist, please login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error adding user to database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/verifyEmail:
+    get:
+      tags:
+        - user
+      summary: Verify user email
+      description: Verify user email using the code sent to the email
+      operationId: verifyEmail
+      parameters:
+        - name: code
+          in: query
+          description: Code sent to the email
+          required: true
+          schema:
+            type: string
+            example: 'AB12CD3'
+        - name: email
+          in: query
+          description: Email to verify
+          required: true
+          schema:
+            type: string
+            format: email
+            example: john@doe.com
+      responses:
+        '200':
+          description: Verification Successful!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invalid email or verification code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error verifying email in database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credential'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        '400':
+          description: email and password are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Please verify your email address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error checking user in database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/googleLogin:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system using Google
+      description: ''
+      operationId: loginUserWithGoogle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleCredential'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        '401':
+          description: Email not found, please sign up
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error checking user in database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/forgotPassword:
+    get:
+      tags:
+        - user
+      summary: Forgot password
+      description: Send a reset password link to the email
+      operationId: forgotPassword
+      parameters:
+        - name: email
+          in: query
+          description: Email to send the reset password link
+          required: true
+          schema:
+            type: string
+            format: email
+            example: john@doe.com
+      responses:
+        '200':
+          description: Password reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Email not found, please sign up
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error sending password reset email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/resetPassword:
+    put:
+      tags:
+        - user
+      summary: Reset password
+      description: Reset user password using the code sent to the email
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credential'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Reset code expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invalid email or reset code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error resetting password 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /event/getSubjects:
+    get:
+      tags:
+        - event
+      summary: Get all subjects for selected user
+      description: Get all subjects for selected user from the database
+      operationId: getSubjects
+      security:
+        - Bearer: []
+      parameters:
+        - name: user_id
+          in: query
+          description: User ID to get the subjects
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 10
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/Subject'
+        '403':
+          description: User does not have permission to get this subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error getting subjects from database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /event/addSubject:
+    post:
+      tags:
+        - event
+      summary: Add a new subject
+      description: Add a new subject to the database
+      operationId: addSubject
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                $ref: '#/components/schemas/Subject'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/MinimalSubject'
+        '400':
+          description: Request body must be an array of subjects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User does not have permission to add this subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error adding subject to database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /event/updateSubject:
+    put:
+      tags:
+        - event
+      summary: Update a subject
+      description: Update a subject in the database
+      operationId: updateSubject
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Subject'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MinimalSubject'
+        '403':
+          description: User does not have permission to update this subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Subject or User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error updating subject in database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /event/deleteSubject:
+    delete:
+      tags:
+        - event
+      summary: Delete a subject
+      description: Delete a subject in the database
+      operationId: deleteSubject
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/DeleteSubject'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinimalSubject'
+        '403':
+          description: User does not have permission to delete this subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Subject or User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error deleting subject in database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Credential:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: john@doe.com
+        password:
+          type: string
+          description: hashed password. Do not send raw password
+          example: '12345'
+      xml:
+        name: credential
+    GoogleCredential:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: john@doe.com
+        token:
+          type: string
+          description: Google OAuth token
+          example: 'eyJhbGciOi'
+      xml:
+        name: googleCredential
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 10
+        email:
+          type: string
+          format: email
+          example: john@doe.com
+      xml:
+        name: user
+    UserToken:
+      type: object
+      properties:
+        token:
+          type: string
+          example: 'eyJhbGciOi'
+        user_id:
+          type: integer
+          format: int64
+          example: 10
+      xml:
+        name: userToken
+    Subject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 10
+        subject_id:
+          type: integer
+          format: int64
+          example: 1
+        subject:
+          type: string
+          example: 'Meeting'
+        start_time_zone:
+          type: string
+          example: 'Asia/Hong_Kong'
+        start_time:
+          type: string
+          format: date-time
+          example: '2021-08-01 10:00:00'
+        end_time_zone:
+          type: string
+          example: 'Asia/Hong_Kong'
+        end_time:
+          type: string
+          format: date-time
+          example: '2021-08-01 11:00:00'
+        all_day_event:
+          type: boolean
+          example: false
+        description:
+          type: string
+          example: 'Meeting with John'
+        location:
+          type: string
+          example: 'Office'
+      xml:
+        name: subject
+    MinimalSubject:
+      type: object
+      properties:
+        subject_id:
+          type: integer
+          format: int64
+          example: 1
+        subject:
+          type: string
+          example: 'Meeting'
+      xml:
+        name: minimalSubject
+    DeleteSubject:
+      type: object
+      properties:
+        subject_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 10
+      xml:
+        name: deleteSubject
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      xml:
+        name: error
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Enter the token return from login API with the `Bearer ` prefix, e.g. "Bearer abcde12345".

@@ -16,7 +16,7 @@ const ResetPasswordPage = () => {
             return;
         }
         fetch(`${backendEndpoint}/resetPassword`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },

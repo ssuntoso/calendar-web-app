@@ -19,7 +19,7 @@ app.use(morgan('combined'))
 cron.schedule('* * * * *', reminder);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Calendar API is running!')
 })
 
 app.use('/api/v1/user', userRoutes)
