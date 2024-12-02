@@ -26,10 +26,11 @@ kubectl -n calendar-api create secret generic db-password --from-literal=db-pass
 kubectl -n calendar-api create secret generic email-password --from-literal=email-password=<EMAIL_PASSWORD>
 kubectl -n calendar-api create secret generic jwt-secret --from-literal=jwt-secret=<JWT_SECRET>
 ```
-3. Apply the `deployment.yaml` and `service.yaml` file 
+3. Modify `deployment.yaml` according to needs
+4. Apply the `deployment.yaml` and `service.yaml` file 
 ```
 kubectl -n calendar-api apply -f k8s/deployment.yaml
 kubectl -n calendar-api apply -f k8s/service.yaml
 ```
-4. To get external ip adderess of the service, use `kubectl -n calendar-api get svc`
-5. Use the EXTERNAL-IP:80/ to make a test API call.
+5. To get external ip adderess of the service, use `kubectl -n calendar-api get svc`
+6. Use the EXTERNAL-IP:80/ to make a test API call.

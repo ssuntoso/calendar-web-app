@@ -19,7 +19,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: DB_HOST
-              value: "35.220.215.14"
+              value: "********"
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
@@ -32,7 +32,7 @@ spec:
             - name: DB_NAME
               value: "postgres"
             - name: EMAIL
-              value: "animocainterview@gmail.com"
+              value: "********"
             - name: EMAIL_PASS
               valueFrom:
                 secretKeyRef:
@@ -44,7 +44,7 @@ spec:
                   name: jwt-secret
                   key: jwt-secret
             - name: FRONTEND_URL
-              value: "http://34.150.32.201"
+              value: "********"
           ports:
             - containerPort: 3000
           resources:

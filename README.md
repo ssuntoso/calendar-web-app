@@ -1,8 +1,9 @@
 # Calender Web App
 This app is design to allow user to have a schedule planner. It will send reminder **15 minutes before the event**.
 <br/>
-Current release: [![Backend Version](https://img.shields.io/badge/backend-v1.0.8-blue)](backend/README.md)
-[![Frontend Version](https://img.shields.io/badge/frontend-v1.0.14-green)](frontend/README.md)
+Current release: <br/>
+[![Frontend Version](https://img.shields.io/badge/CalendarApp-v1.0.15-green)](frontend/README.md)
+[![Backend Version](https://img.shields.io/badge/CalendarAPI-v1.0.8-blue)](backend/README.md)
 ## Demo & Documentation
 This applocation is deployed to Google Cloud using Cloud Run service at [https://calendar-app-114734088432.asia-east2.run.app](https://calendar-app-114734088432.asia-east2.run.app).
 To run localy and test or deploy with your own server, refer to the readme file inside the [frontend](frontend/README.md) and [backend](backend/README.md) folder of this repo. Refer to this [API swagger](backend/calendar-api-swagger.yaml) for API documentation.

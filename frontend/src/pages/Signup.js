@@ -81,7 +81,7 @@ const SignupPage = () => {
                     <br/>
                     <p className="text-center text-sm text-gray-600">
                         Already have an account?{' '}
-                        <a href="/signup" className="font-medium text-[#12acec] hover:text-[#0e8bb5]">
+                        <a href="/login" className="font-medium text-[#12acec] hover:text-[#0e8bb5]">
                             Login
                         </a>
                     </p>
