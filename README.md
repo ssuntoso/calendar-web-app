@@ -11,7 +11,7 @@ To run localy and test or deploy with your own server, refer to the readme file 
 ## Tech Stack 
 - React 
 - Tailwind CSS
-- Syncfusion Scheduler
+- [Syncfusion Scheduler](https://ej2.syncfusion.com/react/documentation/schedule/getting-started)
 - Express
 - PostgreSQL
 - Node.js
